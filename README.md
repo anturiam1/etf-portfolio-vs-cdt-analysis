@@ -10,7 +10,7 @@ Both portfolios start from the same capital ($315,357,771.28 COP) and follow the
 
 | Test | Portfolio | Currency | Costs modeled |
 |---|---|---|---|
-| ETF test | 13 diversified U.S.-listed ETFs (14 after a rebalance) | USD | Global66 conversion fee (1.4% in, 3% out), GMF (4x1000), Global66 exchange rates |
+| ETF test | 13 diversified U.S.-listed ETFs (14 after a rebalance) | USD | Global66 conversion fee (1.4% in, 2-3% out), GMF (4x1000), Global66 exchange rates |
 | ICOLCAP test | ICOLCAP (ETF tracking the MSCI COLCAP) | COP | Trii purchase/sale fees, VAT, GMF (4x1000) |
 
 ## First-month results (cutoff: September 25, 2026)
@@ -31,6 +31,22 @@ Both portfolios start from the same capital ($315,357,771.28 COP) and follow the
 - The ICOLCAP portfolio met the condition: ICOLCAP rose +4.55% in the month. The analysis also shows the condition would have failed with a price decline of about 2.7% from the cutoff close.
 - **The two results are not a like-for-like comparison of management.** The ETF portfolio is measured in dollars and is exposed to the exchange rate; the ICOLCAP portfolio is measured in pesos and has no currency exposure. They are two answers to the same question under different conditions.
 - One month is not enough to judge a strategy; the reports detail the sensitivities and limitations.
+  
+## Second-month results (cutoff: October 26, 2026)
+
+| | ETF portfolio | ICOLCAP portfolio |
+|---|---|---|
+| Net return on capital | -2.60% | -1.25% |
+| Value after the CDT-equivalent withdrawal vs. capital | **-3.61%** (not met) | **-2.27%** (not met) |
+
+![ETF portfolio performance](images/etfs_portfolio_comparison_cutoff_2026-10-26.png)
+
+![CDT test waterfall: ETF portfolio](images/cdt_waterfall_2026-10-26.png)
+
+![ICOLCAP test waterfall](images/icolcap_waterfall_2026-10-26.png)
+
+- The ETF portfolio returned -2.60% net since opening, against +0.16% for the S&P 500 in total return (^SP500TR). Neither test met the condition this month.
+- The ICOLCAP condition was met in the first month, so that withdrawal was executed and left the portfolio. At this cutoff the portfolio starts from the position left by the first month, and the first month's margin does not carry over.
 
 ## Repository structure
 
@@ -48,13 +64,18 @@ etf-portfolio-vs-cdt-analysis/
 | `compare_portfolio_transaction_ledger.py` | Builds the ETF portfolio from a transaction ledger and compares it with the S&P 500 (total return and price index) |
 | `tnx_and_historical_analysis.py` | 10-year Treasury yield (^TNX) movement over the period and historical performance of the original 13 positions |
 | `cdt_portfolio_test.py` | CDT equivalence test for the ETF portfolio, with a waterfall chart |
-| `icolcap_portfolio_test.py` | CDT equivalence test for the ICOLCAP portfolio (COP, Trii), with a waterfall chart |
+| `icolcap_portfolio_test.py` | CDT equivalence test for the ICOLCAP portfolio (COP, Trii), chaining monthly cutoffs, with a waterfall chart |
 
 ### Reports
 
-- [ETF portfolio: first-month executive report](reports/executive_report_etfs_sep25_2026.pdf)
-- [CDT equivalence test (ETF portfolio)](reports/executive_report_cdt_sep25_2026.pdf)
-- [ICOLCAP equivalence test](reports/executive_report_icolcap_sep25_2026.pdf)
+- First month (cutoff: September 25, 2026)
+  - [ETF portfolio: executive report](reports/executive_report_etfs_sep25_2026.pdf)
+  - [CDT equivalence test (ETF portfolio)](reports/executive_report_cdt_sep25_2026.pdf)
+  - [ICOLCAP equivalence test](reports/executive_report_icolcap_sep25_2026.pdf)
+- Second month (cutoff: October 26, 2026)
+  - [ETF portfolio: executive report](reports/executive_report_etfs_oct26_2026.pdf)
+  - [CDT equivalence test (ETF portfolio)](reports/executive_report_cdt_oct26_2026.pdf)
+  - [ICOLCAP equivalence test](reports/executive_report_icolcap_oct26_2026.pdf)
 
 ## Methodology highlights
 
@@ -79,7 +100,8 @@ Each script has a parameters section at the top (cutoff date, exchange rates, fe
 
 - Fees and exchange rates come from Global66 and Trii quotes; Global66 changes its fees by day and amount range, so exit fees are a documented assumption.
 - ICOLCAP prices and dividends are entered manually (no free API from the Colombian Stock Exchange).
-- Each run starts from the initial purchase; chaining several monthly cutoffs is a planned improvement.
+- The ICOLCAP script chains monthly cutoffs: each one starts from the position left by the previous one. The ETF and CDT scripts run from the initial ledger; a sale executed in a given month would be added to the ledger by hand.
+- **Note on SOXX:** SOXX had a 3-for-1 stock split in November 2026 (after the October 26 cutoff). The reports in this repository predate it. Yahoo Finance now returns SOXX prices adjusted for the split, so running the ETF and CDT scripts with the October 26 cutoff today will show different SOXX values than the reports. The scripts will be updated for the split with the next cutoff (November 25, 2026).
 - No withholding tax on dividends is applied (amounts are below the exemption threshold).
 
 ## Tools
